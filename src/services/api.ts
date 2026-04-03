@@ -1,25 +1,37 @@
 import axios from 'axios';
-import type { UserRequest, UserResponse, PageResponse } from '../types/user';
 
-const apiClient = axios.create({
-  baseURL: 'http://localhost:8080/api/users',
+const API_BASE_URL = 'http://localhost:8080/api';
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-export const userService = {
-  // GET /api/users?page=0&size=10
-  getUsers: async (page = 0, size = 10) => {
-    const response = await apiClient.get<PageResponse<UserResponse>>('', {
-      params: { page, size, sort: 'id,desc' }
-    });
-    return response.data;
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
   },
-
-  // POST /api/users
-  createUser: async (data: UserRequest) => {
-    const response = await apiClient.post<UserResponse>('', data);
-    return response.data;
+  (error) => {
+    return Promise.reject(error);
   }
-};
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      // Redirect handled by AuthContext or Router
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;

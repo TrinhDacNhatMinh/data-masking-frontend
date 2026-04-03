@@ -6,10 +6,21 @@ export interface UserRequest {
 }
 
 export interface UserResponse {
+  id: number;
   fullName: string;
+  
+  // Masked fields
   maskedCccd: string;
   maskedEmail: string;
   maskedPhone: string;
+  
+  // Clear fields (only for owner)
+  cccd?: string;
+  email?: string;
+  phone?: string;
+  
+  role?: string;
+  isOwner: boolean;
 }
 
 export interface PageResponse<T> {
