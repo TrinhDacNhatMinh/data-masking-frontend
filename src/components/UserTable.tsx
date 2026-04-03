@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { userService } from '../services/api';
+import { userService } from '../services/user.service';
 import type { UserResponse, PageResponse } from '../types/user';
 
 interface Props {
@@ -15,7 +15,7 @@ export function UserTable({ refreshKey }: Props) {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await userService.getUsers(page, size);
+      const response = await userService.getUsersPaginated(page, size);
       setData(response);
     } catch (error) {
       console.error(error);

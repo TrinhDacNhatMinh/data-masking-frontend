@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { userService } from '../services/api';
+import { userService } from '../services/user.service';
 
 const schema = z.object({
   fullName: z.string().min(1, 'Họ và tên không được để trống'),

@@ -1,30 +1,36 @@
-import { useState } from 'react';
-import { UserForm } from './components/UserForm';
-import { UserTable } from './components/UserTable';
-import './App.css';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { Login } from './pages/Login';
+import { Register } from './pages/Register';
+import { UserList } from './pages/UserList';
 
-function App() {
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  const handleSuccess = () => {
-    setRefreshKey(prev => prev + 1);
-  };
-
+const App: React.FC = () => {
   return (
-    <div className="app-container">
-      <header className="app-header">
-        <h1>Data Masking</h1>
-      </header>
-      <main className="app-main">
-        <div className="left-panel">
-          <UserForm onSuccess={handleSuccess} />
-        </div>
-        <div className="right-panel">
-          <UserTable refreshKey={refreshKey} />
-        </div>
-      </main>
-    </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          
+          {/* Protected Routes */}
+          <Route 
+            path="/users" 
+            element={
+              <ProtectedRoute>
+                <UserList />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Default Route */}
+          <Route path="/" element={<Navigate to="/users" replace />} />
+          <Route path="*" element={<Navigate to="/users" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
-}
+};
 
 export default App;
